@@ -25,9 +25,11 @@ def translate_route(text, language):
     except:
 
         return text
-    
-API_KEY = "YOUR_OPENWEATHER_API_KEY"
-ORS_API_KEY = "YOUR_ORS_API_KEY"
+
+
+API_KEY = "4ffb18f54c98e469a82cf38b580e9e49"
+ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjhlOWJiNGQyMmYxYzRmMDQ4OTNjMjE0NTQxMDJlMzZkIiwiaCI6Im11cm11cjY0In0="
+
 
 # ==========================
 # LOAD MODEL
@@ -256,7 +258,7 @@ def get_coordinates(place):
         url,
         params=params,
         headers=headers,
-        timeout=10
+        timeout=30
     )
 
 
