@@ -6,6 +6,33 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from deep_translator import GoogleTranslator
 
+with st.sidebar:
+    st.title("🚗 Smart City")
+
+    st.subheader("🕒 Current Time")
+    st.write(datetime.now().strftime("%d %b %Y"))
+    st.write(datetime.now().strftime("%I:%M %p"))
+
+    city_placeholder = st.empty()   # 👈 Add this
+
+    st.info("""
+AI-Based Traffic Forecasting System
+
+👨‍💻 Developed By:
+Bhaskar Bhatt
+
+📅 Year: 2026
+""")
+    
+    with st.sidebar.expander("🌐 APIs Used"):
+     st.write("• OpenWeatherMap")
+     st.write("• OpenRouteService")
+
+roads_df = pd.read_csv("./data/roads.csv")
+road_factor_df = pd.read_csv(
+    "./data/road_data.csv"
+)
+
 # ==========================
 # ROUTE TRANSLATION
 # ==========================
@@ -27,8 +54,8 @@ def translate_route(text, language):
         return text
 
 
-API_KEY = "4ffb18f54c98e469a82cf38b580e9e49"
-ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjhlOWJiNGQyMmYxYzRmMDQ4OTNjMjE0NTQxMDJlMzZkIiwiaCI6Im11cm11cjY0In0="
+API_KEY = ""
+ORS_API_KEY = ""
 
 
 # ==========================
@@ -222,6 +249,52 @@ def get_city_factor(city):
 
         return 0.6
     
+def get_road_factor(city, road):
+
+    try:
+
+        data = road_factor_df[
+            (road_factor_df["city"].str.lower() == city.lower())
+            &
+            (road_factor_df["road_name"] == road)
+        ]
+
+        if len(data) > 0:
+            return float(
+                data.iloc[0]["road_factor"]
+            )
+
+        else:
+            return 1.0
+
+    except:
+        return 1.0   
+
+def get_road_time_factor(city, road, hour):
+
+    try:
+        data = road_factor_df[
+            (road_factor_df["city"].str.lower() == city.lower())
+            &
+            (road_factor_df["road_name"] == road)
+        ]
+
+        if len(data) > 0:
+
+            morning = float(data.iloc[0]["morning_factor"])
+            evening = float(data.iloc[0]["evening_factor"])
+
+            if 7 <= hour <= 10:
+                return morning
+
+            elif 17 <= hour <= 20:
+                return evening
+
+        return 1.0
+
+    except:
+        return 1.0
+    
 # ==========================
 # GET COORDINATES
 # ==========================
@@ -254,45 +327,43 @@ def get_coordinates(place):
     }
 
 
-    response = requests.get(
+    try:
+        response = requests.get(
         url,
         params=params,
         headers=headers,
-        timeout=30
+        timeout=5
     )
+    except requests.exceptions.Timeout:
+          return None, None
+    except requests.exceptions.RequestException as e:
+        st.error(f"Network error: {e}")
+        return None, None
 
+    if response.status_code != 200:
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+        return None, None
 
-    data = response.json()
-
+    try:
+        data = response.json()
+    except Exception:
+        print("JSON Error")
+        print("Status Code:", response.status_code)
+        print("Response:", response.text)
+        return None, None
 
     if "features" in data:
+     for feature in data["features"]:
+        props = feature["properties"]
 
-        for feature in data["features"]:
-
-            props = feature["properties"]
-
-
-            if (
-                props.get("country") == "India"
-                and
-                props.get("layer") == "locality"
-            ):
-
-                lon, lat = feature["geometry"]["coordinates"]
-
-
-                print(
-                    "SELECTED:",
-                    props.get("name"),
-                    lat,
-                    lon
-                )
-
-
-                return lat, lon
-
+        if props.get("country") == "India":
+            lon, lat = feature["geometry"]["coordinates"]
+            return lat, lon
 
     return None, None
+
+
 # ==========================
 # GET MULTIPLE ROUTES
 # ==========================
@@ -326,12 +397,11 @@ def get_routes(start_lat, start_lon, end_lat, end_lon):
         timeout=15
     )
 
+# 400 error handle
     if response.status_code == 400:
-
         error = response.json()
 
         if "100000.0 meters" in error.get("error", {}).get("message", ""):
-
             body = {
                 "coordinates": [
                     [start_lon, start_lat],
@@ -340,12 +410,15 @@ def get_routes(start_lat, start_lon, end_lat, end_lon):
                 "instructions": True
             }
 
-            response = requests.post(
-                url,
-                json=body,
-                headers=headers,
-                timeout=15
-            )
+            # Request again
+            response = requests.post(url, json=body, headers=headers)
+
+    # Check final response
+    if response.status_code != 200:
+        print("Status:", response.status_code)
+        print(response.text)
+        return []
+
     data = response.json()
     print(data)
     routes = []
@@ -385,7 +458,8 @@ def get_routes(start_lat, start_lon, end_lat, end_lon):
 
     return routes
     
-st.title("🚗 Smart City Traffic Forecasting")
+st.title("🚦 Smart City Traffic Forecasting")
+st.caption("AI-Powered Traffic Prediction & Route Recommendation System")
 if "city_loaded" not in st.session_state:
     st.session_state.city_loaded = False
 
@@ -401,6 +475,9 @@ with st.form(
             "Enter City",
             st.session_state.city_input
         ).strip().title()
+    
+    if city:
+     city_placeholder.metric("📍 Selected City", city)
 
     load = st.form_submit_button(
         "Load Data"
@@ -429,15 +506,7 @@ if not st.session_state.city_loaded:
 
 
 city = st.session_state.city
-
-
-st.session_state.city = city
-
-
-st.success(
-    f"📍 Current City : {city}"
-)
-    
+ 
 if st.button("Change City"):
 
     st.session_state.city_loaded = False
@@ -451,8 +520,7 @@ if st.button("Change City"):
         del st.session_state.lon
 
     st.rerun()
-
-
+    
 # ==========================
 # WEATHER API
 # ==========================
@@ -575,8 +643,6 @@ st.info(
     )
 )
 
-
-
 # ==========================
 # FESTIVAL CHECK
 # ==========================
@@ -616,12 +682,27 @@ else:
     st.success(
         "📅 No Festival Today"
     )
-
-
-
+    
 # ==========================
-# FORECAST
+# ROAD SELECTION
 # ==========================
+
+city_roads = roads_df[
+    roads_df["city"].str.lower() == city.lower()
+]
+
+if len(city_roads) > 0:
+
+    selected_road = st.selectbox(
+        "🛣️ Select Road",
+        city_roads["road_name"].tolist()
+    )
+
+else:
+
+    selected_road = "Overall Traffic"
+    st.info("No road data available. Showing city prediction.")
+
 
 # ==========================
 # FORECAST
@@ -636,7 +717,7 @@ if city in city_alias:
 
 
 st.subheader(
-    "📈 Traffic Forecast"
+    f"📈 {selected_road} Traffic Forecast"
 )
 
 
@@ -719,10 +800,14 @@ for h in forecast_range:
     factor = get_city_factor(city)
 
 
-    traffic = int(
-        prediction * factor
+    road_factor = get_road_factor(
+    city,
+    selected_road
     )
 
+    traffic = int(
+        prediction * factor * road_factor
+    )
 
     forecast_data.append(
     [
@@ -822,21 +907,26 @@ if find_route:
     elif destination.strip() == "":
         st.warning("⚠️ Please enter Destination.")
 
-    else:       
-     with st.spinner("Finding best route..."):
+    elif source.strip().lower() == destination.strip().lower():
+        st.warning("⚠️ Source and Destination cannot be the same.")
 
-        s_lat, s_lon = get_coordinates(source)
-        d_lat, d_lon = get_coordinates(destination)
+    else:
+        with st.spinner("Finding best route..."):
 
+            s_lat, s_lon = get_coordinates(source)
+            d_lat, d_lon = get_coordinates(destination)
 
-        if s_lat is None or d_lat is None:
-
-            st.error(
-                "City not found."
-            )
-
+        if s_lat is None and d_lat is None:
+            st.error("❌ Both Source and Destination are invalid.")
             st.session_state.route_found = False
 
+        elif s_lat is None:
+            st.error("❌ Source location not found.")
+            st.session_state.route_found = False
+
+        elif d_lat is None:
+            st.error("❌ Destination location not found.")
+            st.session_state.route_found = False
 
         else:
 
@@ -1349,13 +1439,11 @@ with st.expander(
                     f"Traffic Load : {congestion}%"
                 )
 
-
 # ==========================
 # SINGLE PREDICTION
 # ==========================
 
 if st.button("Predict Traffic"):
-
 
     sample = pd.DataFrame(
 
@@ -1387,9 +1475,7 @@ if st.button("Predict Traffic"):
 
     )
 
-
     prediction = model.predict(sample)[0]
-
 
     city_info = city_df[
         city_df["city"].str.lower()
@@ -1402,42 +1488,35 @@ if st.button("Predict Traffic"):
 
     factor = get_city_factor(city)
 
-
-
-    traffic = int(
-        prediction * factor
+    road_factor = get_road_factor(
+        city,
+        selected_road
     )
 
-
+    traffic = int(
+        prediction * factor * road_factor
+    )
 
     st.success(
         f"🚗 Predicted Traffic : {traffic}"
     )
 
-
-
     # SAVE HISTORY
-
     file="data/prediction_history.csv"
-
 
     new=pd.DataFrame([{
 
-        "date":
-        now.strftime("%Y-%m-%d"),
+    "date": now.strftime("%Y-%m-%d"),
 
-        "time":
-        now.strftime("%H:%M"),
+    "time": now.strftime("%H:%M"),
 
-        "city":
-        city,
+    "city": city,
 
-        "predicted_traffic":
-        traffic
+    "road": selected_road,
 
-    }])
+    "predicted_traffic": traffic
 
-
+}])
 
     try:
 
@@ -1452,25 +1531,18 @@ if st.button("Predict Traffic"):
 
         final=new
 
-
-
     final.to_csv(
         file,
         index=False
     )
 
-
-
     st.info(
         "💾 Prediction Saved"
     )
 
-
-
 # ==========================
 # VERIFICATION
 # ==========================
-
 
 st.subheader(
     "📊 Prediction Verification"
@@ -1482,10 +1554,7 @@ actual = st.number_input(
     min_value=0
 )
 
-
-
 if st.button("Verify Prediction"):
-
 
     try:
 
@@ -1493,22 +1562,17 @@ if st.button("Verify Prediction"):
             "data/prediction_history.csv"
         )
 
-
         last=history.iloc[-1]
-
 
         predicted=int(
             last["predicted_traffic"]
         )
 
-
         if actual>0:
-
 
             error=abs(
                 predicted-actual
             )
-
 
             accuracy = (
             1 -
@@ -1517,29 +1581,24 @@ if st.button("Verify Prediction"):
             max(predicted, actual)
             ) * 100
 
-
             accuracy = max(
                 0,
                 min(100, accuracy)
             )
-
 
             st.metric(
                 "Predicted",
                 predicted
             )
 
-
             st.metric(
                 "Actual",
                 actual
             )
 
-
             st.success(
                 f"🎯 Accuracy : {accuracy:.2f}%"
             )
-
 
         else:
 
@@ -1552,3 +1611,28 @@ if st.button("Verify Prediction"):
         st.warning(
             "No prediction history found"
         )
+
+st.markdown("""
+<style>
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    color: gray;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+    z-index: 999;
+}
+</style>
+
+<div class="footer">
+🚦 <b>Smart City Traffic Forecasting</b> |
+AI + Machine Learning |
+OpenWeatherMap |
+OpenRouteService
+</div>
+""", unsafe_allow_html=True)

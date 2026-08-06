@@ -1,0 +1,134 @@
+state,city,road_name
+Uttarakhand,Haldwani,Kathgodam Road
+Uttarakhand,Haldwani,Nainital Road
+Uttarakhand,Haldwani,Bareilly Road
+Uttarakhand,Haldwani,Rampur Road
+Uttarakhand,Haldwani,Kaladhungi Road
+Uttarakhand,Haldwani,Ranibagh Road
+Uttarakhand,Haldwani,Bhimtal Road
+
+Uttarakhand,Gadarpur,Rudrapur Road
+Uttarakhand,Gadarpur,Kashipur Road
+Uttarakhand,Gadarpur,Dineshpur Road
+Uttarakhand,Gadarpur,Gularbhoj Road
+
+Uttarakhand,Rudrapur,Gadarpur Road
+Uttarakhand,Rudrapur,Kashipur Road
+Uttarakhand,Rudrapur,Kichha Road
+Uttarakhand,Rudrapur,Bilaspur Road
+Uttarakhand,Rudrapur,Sitarganj Road
+
+Uttarakhand,Kashipur,Rampur Road
+Uttarakhand,Kashipur,Bazpur Road
+Uttarakhand,Kashipur,Rudrapur Road
+Uttarakhand,Kashipur,Jaspur Road
+Uttarakhand,Kashipur,Moradabad Road
+
+Uttarakhand,Dehradun,Rajpur Road
+Uttarakhand,Dehradun,Haridwar Road
+Uttarakhand,Dehradun,Mussoorie Road
+Uttarakhand,Dehradun,Saharanpur Road
+Uttarakhand,Dehradun,Chakrata Road
+
+Uttarakhand,Haridwar,Delhi Road
+Uttarakhand,Haridwar,Rishikesh Road
+Uttarakhand,Haridwar,Roorkee Road
+Uttarakhand,Haridwar,Jwalapur Road
+
+Uttarakhand,Rishikesh,Haridwar Road
+Uttarakhand,Rishikesh,Badrinath Road
+Uttarakhand,Rishikesh,Neelkanth Road
+Uttarakhand,Rishikesh,Devprayag Road
+
+Uttarakhand,Roorkee,Delhi Road
+Uttarakhand,Roorkee,Haridwar Road
+Uttarakhand,Roorkee,Dehradun Road
+
+Uttarakhand,Almora,Haldwani Road
+Uttarakhand,Almora,Ranikhet Road
+Uttarakhand,Almora,Binsar Road
+
+Uttarakhand,Nainital,Haldwani Road
+Uttarakhand,Nainital,Bhowali Road
+Uttarakhand,Nainital,Bhimtal Road
+
+Uttarakhand,Pithoragarh,Tanakpur Road
+Uttarakhand,Pithoragarh,Almora Road
+Uttarakhand,Pithoragarh,Dharchula Road
+
+Uttarakhand,Khatima,Tanakpur Road
+Uttarakhand,Khatima,Sitarganj Road
+Uttarakhand,Khatima,Banbasa Road
+
+
+Delhi,Delhi,Ring Road
+Delhi,Delhi,ITO Road
+Delhi,Delhi,NH-48
+Delhi,Delhi,DND Flyway
+Delhi,Delhi,Outer Ring Road
+Delhi,Delhi,MG Road
+
+Haryana,Gurgaon,MG Road
+Haryana,Gurgaon,Dwarka Expressway
+Haryana,Gurgaon,Sohna Road
+Haryana,Faridabad,Mathura Road
+
+Uttar Pradesh,Noida,Noida Expressway
+Uttar Pradesh,Noida,Greater Noida Expressway
+Uttar Pradesh,Noida,DND Road
+Uttar Pradesh,Lucknow,Shaheed Path
+Uttar Pradesh,Lucknow,Kanpur Road
+Uttar Pradesh,Lucknow,Sultanpur Road
+Uttar Pradesh,Kanpur,NH-19
+Uttar Pradesh,Agra,Yamuna Expressway
+Uttar Pradesh,Agra,Delhi Road
+Uttar Pradesh,Varanasi,NH-19
+
+Maharashtra,Mumbai,Western Express Highway
+Maharashtra,Mumbai,Eastern Express Highway
+Maharashtra,Mumbai,LBS Road
+Maharashtra,Mumbai,Sion Panvel Highway
+Maharashtra,Pune,Mumbai Pune Highway
+Maharashtra,Pune,Nagar Road
+Maharashtra,Nagpur,NH-44
+
+Karnataka,Bengaluru,Outer Ring Road
+Karnataka,Bengaluru,Bellary Road
+Karnataka,Bengaluru,Hosur Road
+Karnataka,Bengaluru,Mysore Road
+
+Tamil Nadu,Chennai,OMR Road
+Tamil Nadu,Chennai,Anna Salai
+Tamil Nadu,Chennai,East Coast Road
+Tamil Nadu,Coimbatore,Avinashi Road
+
+Telangana,Hyderabad,Outer Ring Road
+Telangana,Hyderabad,NH-44
+Telangana,Hyderabad,Hitech City Road
+
+West Bengal,Kolkata,EM Bypass
+West Bengal,Kolkata,VIP Road
+West Bengal,Kolkata,Park Street
+
+Gujarat,Ahmedabad,SG Highway
+Gujarat,Ahmedabad,Sarkhej Gandhinagar Highway
+Gujarat,Surat,Varachha Road
+
+Rajasthan,Jaipur,Ajmer Road
+Rajasthan,Jaipur,Tonk Road
+Rajasthan,Jaipur,Delhi Road
+
+Punjab,Amritsar,GT Road
+Punjab,Amritsar,Ranjit Avenue Road
+Punjab,Ludhiana,Ferozepur Road
+
+Bihar,Patna,Bailey Road
+Bihar,Patna,Ashiana Digha Road
+Bihar,Patna,NH-30
+
+Odisha,Bhubaneswar,Janpath Road
+Odisha,Bhubaneswar,Cuttack Road
+
+Madhya Pradesh,Indore,Ring Road
+Madhya Pradesh,Indore,Rau Road
+Madhya Pradesh,Bhopal,Hoshangabad Road
